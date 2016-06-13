@@ -37,24 +37,24 @@ If term is an ID will return that specific ID. If it's a string, it will return 
         Please note, if it says list or dict, it means the python types.
         Indentation indicates level. So English is ['Titles']['English']
 
-        'Titles' - Contains all the titles found for the anime
-            'English' - English title of the novel
-            'Alt' - Alternative title (Usually the Japanese one, but other languages exist)
-            'Aliases' - A list of str that define the aliases as given in VNDB.
-        'Img' - Link to the Image shown on VNDB for that Visual Novel (May be NSFW, I don't filter those)
-        'Length' - Length given by VNDB
-        'Developers' - A list containing the Developers of the VN.
-        'Publishers' - A list containing the Publishers of the VN.
-        'Tags' - Contains 3 lists of different tag categories
-            'Content' - List of tags that have to do with the story's content as defined by VNDB. Ex: Edo Era
-            'Technology' - List of tags that have to do with the VN's technology. Ex: Protagonist with a Face (Wew Lad, 21st century)
-            'Erotic' - List of tags that have to do with the VN's sexual content. Ex: Tentacles
-        'Releases' - A list of dictionaries. They have the following format.
-            'Date' - Date VNDB lists for release
-            'Ages' - Age group appropriate for as determined on VNDB
-            'Platform' - Release Platform
-            'Name' - The name for this particular Release
-            'ID' - The id for this release, also doubles as the link if you append https://vndb.org/ to it
+        'titles' - Contains all the titles found for the anime
+            'english' - English title of the novel
+            'alt' - Alternative title (Usually the Japanese one, but other languages exist)
+            'aliases' - A list of str that define the aliases as given in VNDB.
+        'img' - Link to the Image shown on VNDB for that Visual Novel (May be NSFW, I don't filter those)
+        'length' - Length given by VNDB
+        'developers' - A list containing the Developers of the VN.
+        'publishers' - A list containing the Publishers of the VN.
+        'tags' - Contains 3 lists of different tag categories
+            'content' - List of tags that have to do with the story's content as defined by VNDB. Ex: Edo Era
+            'technology' - List of tags that have to do with the VN's technology. Ex: Protagonist with a Face (Wew Lad, 21st century)
+            'erotic' - List of tags that have to do with the VN's sexual content. Ex: Tentacles
+        'releases' - A list of dictionaries. They have the following format.
+            'date' - Date VNDB lists for release
+            'ages' - Age group appropriate for as determined on VNDB
+            'platform' - Release Platform
+            'name' - The name for this particular Release
+            'id' - The id for this release, also doubles as the link if you append https://vndb.org/ to it
 
         :param term: id or name to get details of.
         :return dict: Dictionary with the parsed results of a novel
@@ -63,31 +63,31 @@ If term is an ID will return that specific ID. If it's a string, it will return 
 ## Example return data
 ```
 {
-	'Titles': {
-		'English': 'Hakuouki Zuisouroku', 
-		'Alt': '薄桜鬼 随想録', 
-		'Aliases': ['Hakuoki Zuisouroku']
+	'titles': {
+		'english': 'Hakuouki Zuisouroku', 
+		'alt': '薄桜鬼 随想録', 
+		'aliases': ['Hakuoki Zuisouroku']
 	}, 
-	'Length': None, 
-	'Publishers': ['Idea Factory Co., Ltd.', 'Aksys Games'], 
-	'Img':'https://s.vndb.org/cv/42/17942.jpg', 
-	'Tags': {
-		'Content': ['Edo Era', 'Shinsengumi', 'Female Protagonist', 'Hero in Kimono', 'Samurai Hero', 'Cheerful Hero', 'Early Modern Period Earth', 'Bakumatsu'], 
-		'Technology': ['Otome Game', 'No Sexual Content', 'Protagonist With a Face'], 
-		'Erotic': None
+	'length': None, 
+	'publishers': ['Idea Factory Co., Ltd.', 'Aksys Games'], 
+	'img':'https://s.vndb.org/cv/42/17942.jpg', 
+	'tags': {
+		'content': ['Edo Era', 'Shinsengumi', 'Female Protagonist', 'Hero in Kimono', 'Samurai Hero', 'Cheerful Hero', 'Early Modern Period Earth', 'Bakumatsu'], 
+		'technology': ['Otome Game', 'No Sexual Content', 'Protagonist With a Face'], 
+		'erotic': None
 	}, 
-	'Developers': ['Otomate', 'Design Factory Co., Ltd.'], 
-	'Releases': {
-		'English': [{'ID': 'r30158',
-					 'Platform': 'PlayStation 3', 
-					 'Ages': '17+', 'Date': '2014-05-06', 
-					 'Name': 'Hakuoki: Stories of the Shinsengumi - Standard Edition'
+	'developers': ['Otomate', 'Design Factory Co., Ltd.'], 
+	'releases': {
+		'english': [{'id': 'r30158',
+					 'platform': 'PlayStation 3', 
+					 'ages': '17+', 'Date': '2014-05-06', 
+					 'name': 'Hakuoki: Stories of the Shinsengumi - Standard Edition'
 					 }], 
-		'Japanese': [{'ID': 'r3515', 
-			          'Platform': 'PlayStation 2', 
-			          'Ages': '12+', 
-			          'Date': '2009-08-27', 
-			          'Name': 'Hakuoki Zuisouroku - Limited Edition'}]
+		'japanese': [{'id': 'r3515', 
+			          'platform': 'PlayStation 2', 
+			          'ages': '12+', 
+			          'date': '2009-08-27', 
+			          'name': 'Hakuoki Zuisouroku - Limited Edition'}]
 	}
 }
 ```
