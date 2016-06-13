@@ -8,7 +8,7 @@ class Shosetsu:
     def __init__(self, loop=None):
         self.session = aiohttp.ClientSession()
         self.base_url = "https://vndb.org"
-        self.headers = {"User-Agent": "Shosetsu 0.1 / Aiohttp / Python 3"}
+        self.headers = {"User-Agent": "Shosetsu 1.0 / Aiohttp / Python 3"}
         self.loop = loop if loop is not None else asyncio.get_event_loop()  #  Needed to close down, otherwise await passes it implicitly
         atexit.register(self.cleanup)
 
