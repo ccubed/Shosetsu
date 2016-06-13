@@ -28,7 +28,7 @@ Python VNDB API Bindings for Python 3.5+ using asyncio.
         ```
     
 ## Example Return Data
-Please see https://github.com/ccubed/Shosetsu/blob/master/Shosetsu/Parsing.py for information about return types for each search category.
+Please see [Parsing.py](https://github.com/ccubed/Shosetsu/blob/master/Shosetsu/Parsing.py) for information about return types for each search category.
 
 ## Shosetsu.get_novel(term)
 ```
