@@ -26,10 +26,10 @@ async def parse_release_results(soup):
     temp_rel = {}
     for item in list(soup.children)[1:]:
         child = list(item.children)
-        temp_rel['Date'] = child[0].string
-        temp_rel['Ages'] = child[1].string
-        temp_rel['Platform'] = child[2].abbr.get('title')
-        temp_rel['Name'] = child[3].a.string
+        temp_rel['date'] = child[0].string
+        temp_rel['ages'] = child[1].string
+        temp_rel['platform'] = child[2].abbr.get('title')
+        temp_rel['name'] = child[3].a.string
         releases.append(temp_rel)
     del temp_rel
     return releases
@@ -44,7 +44,7 @@ async def parse_prod_staff_results(soup):
     soup = soup.find_all('li')
     producers = []
     for item in soup:
-        producers.append({'Nationality': item.abbr.get('title'), 'Name': item.a.string})
+        producers.append({'nationality': item.abbr.get('title'), 'name': item.a.string})
     return producers
 
 async def parse_character_results(soup):
@@ -59,13 +59,13 @@ async def parse_character_results(soup):
     characters = []
     temp_c = {}
     for item in soup:
-        temp_c['Gender'] = item.abbr.get('title')
-        temp_c['Name'] = list(item.children)[1].a.string
-        temp_c['Games'] = []
+        temp_c['gender'] = item.abbr.get('title')
+        temp_c['name'] = list(item.children)[1].a.string
+        temp_c['games'] = []
         for game in list(list(list(item.children)[1].children)[1].children):
             if not isinstance(game, NavigableString):
                 continue
-            temp_c['Games'].append({'Name': game.string, 'ID': game.get('href').split('/')[1]})
+            temp_c['games'].append({'name': game.string, 'id': game.get('href').split('/')[1]})
         characters.append(temp_c)
     del temp_c
     return characters
@@ -94,7 +94,7 @@ async def parse_user_results(soup):
     users = []
     t_u = {}
     for item in soup:
-        t_u['Name'] = list(item.children)[0].a.string
-        t_u['Joined'] = list(item.children)[1].string
+        t_u['name'] = list(item.children)[0].a.string
+        t_u['joined'] = list(item.children)[1].string
         users.append(t_u)
     return users

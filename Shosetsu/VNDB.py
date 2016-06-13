@@ -10,6 +10,9 @@ class Shosetsu:
         self.session = aiohttp.ClientSession()
         self.base_url = "https://vndb.org"
         self.headers = {"User-Agent": "Shosetsu 1.0 / Aiohttp / Python 3"}
+        self.stypes = {'v': 'Visual Novels', 'r': 'Releases', 'p': 'Producers',
+                       's': 'Staff', 'c': 'Characters', 'g': 'Tags',
+                       'i': 'Traits', 'u': 'Users'}
 
     async def search_vndb(self, stype, term):
         """
@@ -97,10 +100,10 @@ class Shosetsu:
                 raise aiohttp.HttpBadRequest("VNDB reported that there is no data for ID {}".format(vnid))
             text = await response.text()
             soup = BeautifulSoup(text, 'lxml')
-            data = {'Titles': {}, 'Img': None, 'Length': None, 'Developers': [], 'Publishers': [], 'Tags': {}, 'Releases': {}}
-            data['Titles']['English'] = soup.find_all('div', class_='mainbox')[0].h1.string
-            data['Titles']['Alt'] = soup.find_all('h2', class_='alttitle')[0].string
-            data['Img'] = 'https:' + soup.find_all('div', class_='vnimg')[0].img.get('src')
+            data = {'titles': {}, 'img': None, 'length': None, 'developers': [], 'publishers': [], 'tags': {}, 'releases': {}}
+            data['titles']['english'] = soup.find_all('div', class_='mainbox')[0].h1.string
+            data['titles']['alt'] = soup.find_all('h2', class_='alttitle')[0].string
+            data['img'] = 'https:' + soup.find_all('div', class_='vnimg')[0].img.get('src')
             for item in soup.find_all('tr'):
                 if 'class' in item.attrs or len(list(item.children)) == 1:
                     continue
@@ -108,9 +111,9 @@ class Shosetsu:
                     tlist = []
                     for alias in list(item.children)[1:]:
                         tlist.append(alias.string)
-                    data['Titles']['Aliases'] = tlist
+                    data['titles']['aliases'] = tlist
                 elif item.td.string == 'Length':
-                    data['Length'] = list(item.children)[1].string
+                    data['length'] = list(item.children)[1].string
                 elif item.td.string == 'Developer':
                     tl = []
                     for item in list(list(item.children)[1].children):
@@ -118,7 +121,7 @@ class Shosetsu:
                             continue
                         if 'href' in item.attrs:
                             tl.append(item.string)
-                    data['Developers'] = tl
+                    data['developers'] = tl
                     del tl
                 elif item.td.string == 'Publishers':
                     tl = []
@@ -127,7 +130,7 @@ class Shosetsu:
                             continue
                         if 'href' in item.attrs:
                             tl.append(item.string)
-                    data['Publishers'] = tl
+                    data['publishers'] = tl
             conttags = []
             techtags = []
             erotags = []
@@ -143,9 +146,9 @@ class Shosetsu:
                     techtags.append(item.a.string)
                 if 'ero' in " ".join(item.get('class')):
                     erotags.append(item.a.string)
-            data['Tags']['Content'] = conttags if len(conttags) else None
-            data['Tags']['Technology'] = techtags if len(techtags) else None
-            data['Tags']['Erotic'] = erotags if len(erotags) else None
+            data['tags']['content'] = conttags if len(conttags) else None
+            data['tags']['technology'] = techtags if len(techtags) else None
+            data['tags']['erotic'] = erotags if len(erotags) else None
             del conttags
             del techtags
             del erotags
@@ -158,22 +161,22 @@ class Shosetsu:
                     if cur_lang is None:
                         cur_lang = item.td.abbr.get('title')
                     else:
-                        data['Releases'][cur_lang] = releases
+                        data['releases'][cur_lang] = releases
                         releases = []
                         cur_lang = item.td.abbr.get('title')
                 else:
-                    temp_rel = {'Date': 0, 'Ages': 0, 'Platform': 0, 'Name': 0, 'ID': 0}
+                    temp_rel = {'date': 0, 'ages': 0, 'platform': 0, 'name': 0, 'id': 0}
                     children = list(item.children)
-                    temp_rel['Date'] = children[0].string
-                    temp_rel['Ages'] = children[1].string
-                    temp_rel['Platform'] = children[2].abbr.get('title')
-                    temp_rel['Name'] = children[3].a.string
-                    temp_rel['ID'] = children[3].a.get('href')[1:]
+                    temp_rel['date'] = children[0].string
+                    temp_rel['ages'] = children[1].string
+                    temp_rel['platform'] = children[2].abbr.get('title')
+                    temp_rel['name'] = children[3].a.string
+                    temp_rel['id'] = children[3].a.get('href')[1:]
                     del children
                     releases.append(temp_rel)
                     del temp_rel
             if len(releases) > 0 and cur_lang is not None:
-                data['Releases'][cur_lang] = releases
+                data['releases'][cur_lang] = releases
             del releases
             del cur_lang
             desc = ""
@@ -183,7 +186,7 @@ class Shosetsu:
                 if item.startswith('['):
                     continue
                 desc += item.string + "\n"
-            data['Description'] = desc
+            data['description'] = desc
             return data
 
     async def parse_search(self, stype, soup):
