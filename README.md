@@ -11,7 +11,7 @@ Search vndb.org for a term and return matching Visual Novels.
 ```
     
 ## Example Return Data
-```json
+```
 [{'id': 'v5388', 'name': '3-days Marriage ~Hikarugenji no Koibito~'}, 
  {'id': 'v995', 'name': 'Altered Pink ~Tokumu Sentai Duel Ranger~'}, 
  {'id': 'v466', 'name': 'Doko e Iku no, Ano Hi'}, 
@@ -52,7 +52,7 @@ If term is an ID will return that specific ID. If it's a string, it will return 
 ```
 
 ## Example return data
-```json
+```
 {
 	'Titles': {
 		'English': 'Hakuouki Zuisouroku', 
