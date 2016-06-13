@@ -1,1 +1,1 @@
-from VNDB import *
+from .VNDB import *
