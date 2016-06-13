@@ -4,8 +4,8 @@ Python VNDB API Bindings for Python 3.5+ using asyncio.
 
 # Current Endpoints
 ## Shosetsu.search_vndb(stype, term)
-````
-        Search vndb.org for a term and return matching results from type.
+```
+    Search vndb.org for a term and return matching results from type.
 
         :param stype: type to search for.
             Type should be one of:
@@ -25,7 +25,7 @@ Python VNDB API Bindings for Python 3.5+ using asyncio.
             VNDBOneResult - When you search for something but it instead redirects us to a direct content page
             VNDBNoResults - When nothing was found for that search
             VNDBBadStype - Raised when an incorrect search type is passed
-        ```
+```
     
 ## Example Return Data
 Please see [Parsing.py](https://github.com/ccubed/Shosetsu/blob/master/Shosetsu/Parsing.py) for information about return types for each search category.
