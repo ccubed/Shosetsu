@@ -3,23 +3,32 @@ Python VNDB API Bindings for Python 3.5+ using asyncio.
 (really I just scrape the website, because the tcp api doesn't even follow its own rules)
 
 # Current Endpoints
-## Shosetsu.search_visual_novels(term)
+## Shosetsu.search_vndb(stype, term)
 ````
-Search vndb.org for a term and return matching Visual Novels.
-:param term: string to search for
-:return: List of Dictionaries. Dictionaries contain a name and id.
-```
+        Search vndb.org for a term and return matching results from type.
+
+        :param stype: type to search for.
+            Type should be one of:
+                v - Visual Novels
+                r - Releases
+                p - Producers
+                s - Staff
+                c - Characters
+                g - Tags
+                i - traits
+                u - Users
+        :param term: string to search for
+        :return: Results. Result format depends on what you searched for. See the Parsing.py module for more specific documentation.
+
+        Exceptions:
+            aiohttp.HttpBadRequest - On 404s
+            VNDBOneResult - When you search for something but it instead redirects us to a direct content page
+            VNDBNoResults - When nothing was found for that search
+            VNDBBadStype - Raised when an incorrect search type is passed
+        ```
     
 ## Example Return Data
-```
-[{'id': 'v5388', 'name': '3-days Marriage ~Hikarugenji no Koibito~'}, 
- {'id': 'v995', 'name': 'Altered Pink ~Tokumu Sentai Duel Ranger~'}, 
- {'id': 'v466', 'name': 'Doko e Iku no, Ano Hi'}, 
- {'id': 'v14581', 'name': 'Hotaru no Hikaru ~Fluorite~'}, 
- {'id': 'v3196', 'name': 'Ren no Koi ~Others~'}, 
- {'id': 'v2190', 'name': 'Seito Kaichou Hikaru ~Inma ni Senryousareta Gakuen~'}, 
- {'id': 'v2759', 'name': 'Shokusou! Mahou Shoujo Hikaru'}]
-```    
+Please see https://github.com/ccubed/Shosetsu/blob/master/Shosetsu/Parsing.py for information about return types for each search category.
 
 ## Shosetsu.get_novel(term)
 ```

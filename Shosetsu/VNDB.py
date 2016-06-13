@@ -2,33 +2,58 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 from bs4 import NavigableString
-import atexit
+from .errors import *
+from .Parsing import *
 
 class Shosetsu:
     def __init__(self, loop=None):
         self.session = aiohttp.ClientSession()
         self.base_url = "https://vndb.org"
         self.headers = {"User-Agent": "Shosetsu 1.0 / Aiohttp / Python 3"}
-        self.loop = loop if loop is not None else asyncio.get_event_loop()  #  Needed to close down, otherwise await passes it implicitly
-        atexit.register(self.cleanup)
 
-    async def search_visual_novels(self, term):
+    async def search_vndb(self, stype, term):
         """
-        Search vndb.org for a term and return matching Visual Novels.
+        Search vndb.org for a term and return matching results from type.
 
+        :param stype: type to search for.
+            Type should be one of:
+                v - Visual Novels
+                r - Releases
+                p - Producers
+                s - Staff
+                c - Characters
+                g - Tags
+                i - traits
+                u - Users
         :param term: string to search for
-        :return: List of Dictionaries. Dictionaries contain a name and id.
+        :return: Results. Result format depends on what you searched for. See the Parsing.py module for more specific documentation.
+
+        Exceptions:
+            aiohttp.HttpBadRequest - On 404s
+            VNDBOneResult - When you search for something but it instead redirects us to a direct content page
+            VNDBNoResults - When nothing was found for that search
+            VNDBBadStype - Raised when an incorrect search type is passed
         """
-        async with self.session.get(self.base_url + "/v/all", params={"sq":term}, headers=self.headers) as response:
+        fstype = ""
+        if stype not in ['v', 'r', 'p', 's', 'c', 'g', 'i', 'u']:
+            raise VNDBBadStype(stype)
+        else:
+            if stype in ['v', 'p', 's', 'c', 'u']:
+                fstype = '/{}/all'.format(stype)
+            elif stype in ['g', 'i']:
+                fstype = '/{}/list'.format(stype)
+            elif stype == 'r':
+                fstype = '/r'
+        async with self.session.get(self.base_url + "{}".format(fstype), params={"q": term}, headers=self.headers) as response:
             if response.status == 404:
                 raise aiohttp.HttpBadRequest("VN Not Found")
+            elif 'q=' not in response.url:
+                raise VNDBOneResult(term, response.url.rsplit('/', 1)[1])
             text = await response.text()
+            if 'No Results' in text:
+                raise VNDBNoResults(term)
             soup = BeautifulSoup(text, 'lxml')
-            soup = soup.find_all('td', class_='tc1')
-            vns = []
-            for item in soup[1:]:
-                vns.append({'name': item.string, 'id': item.a.get('href')[1:]})
-            return vns
+            return await self.parse_search(stype, soup)
 
     async def get_novel(self, term):
         """
@@ -55,15 +80,18 @@ class Shosetsu:
             'Platform' - Release Platform
             'Name' - The name for this particular Release
             'ID' - The id for this release, also doubles as the link if you append https://vndb.org/ to it
+        'Desription' - Contains novel description text if there is any.
 
         :param term: id or name to get details of.
         :return dict: Dictionary with the parsed results of a novel
         """
-        if not term.isdigit():
-            vnid = await self.search_visual_novels(term)
-            vnid = id[0]['id']
+        if not term.isdigit() and not term.startswith('v'):
+            vnid = await self.search_vndb('v', term)
+            vnid = vnid[0]['id']
         else:
-            vnid = 'v' + str(term)
+            vnid = str(term)
+            if not vnid.startswith('v'):
+                vnid = 'v' + vnid
         async with self.session.get(self.base_url + "/{}".format(vnid), headers=self.headers) as response:
             if response.status == 404:
                 raise aiohttp.HttpBadRequest("VNDB reported that there is no data for ID {}".format(vnid))
@@ -148,7 +176,36 @@ class Shosetsu:
                 data['Releases'][cur_lang] = releases
             del releases
             del cur_lang
+            desc = ""
+            for item in list(soup.find_all('td', class_='vndesc')[0].children)[1].contents:
+                if not isinstance(item, NavigableString):
+                    continue
+                if item.startswith('['):
+                    continue
+                desc += item.string + "\n"
+            data['Description'] = desc
             return data
 
-    def cleanup(self):
-        self.loop.run_until_complete(self.session.close())
+    async def parse_search(self, stype, soup):
+        """
+        This is our parsing dispatcher
+
+        :param stype: Search type category
+        :param soup: The beautifulsoup object that contains the parsed html
+        """
+        if stype == 'v':
+            return await parse_vn_results(soup)
+        elif stype == 'r':
+            return await parse_release_results(soup)
+        elif stype == 'p':
+            return await parse_prod_staff_results(soup)
+        elif stype == 's':
+            return await parse_prod_staff_results(soup)
+        elif stype == 'c':
+            return await parse_character_results(soup)
+        elif stype == 'g':
+            return await parse_tag_results(soup)
+        elif stype == 'i':
+            return await parse_tag_results(soup)
+        elif stype == 'u':
+            return await parse_user_results(soup)

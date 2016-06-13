@@ -2,13 +2,13 @@ from setuptools import setup
 
 setup(
     name='Shosetsu',
-    version='1.0.1',
+    version='1.1.0',
     packages=['Shosetsu'],
     url='https://github.com/ccubed/Shosetsu',
     license='MIT',
     author='Cooper Click',
     author_email='ccubed.techno@gmail.com',
-    description='Python 3 Asyncio VNDB Bindings',
+    description='Python 3 Aiohttp VNDB Scraper',
     long_description='Shosetsu is a Python 3 Asyncio VNDB Website scraper that foregos the awful TCP based SQL database wrapper called an API.',
     classifiers=[
         'Development Status :: 4 - Beta',
