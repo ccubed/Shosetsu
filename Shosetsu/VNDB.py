@@ -57,7 +57,7 @@ class Shosetsu:
                 raise VNDBNoResults(term)
             soup = BeautifulSoup(text, 'lxml')
             resp = await self.parse_search(stype, soup)
-            if resp = []:
+            if resp == []:
                 raise VNDBNoResults(term)
             return resp
 
@@ -138,17 +138,18 @@ class Shosetsu:
             techtags = []
             erotags = []
             test = soup.find('div', attrs={'id': 'vntags'})
-            for item in list(test.children):
-                if isinstance(item, NavigableString):
-                    continue
-                if 'class' not in item.attrs:
-                    continue
-                if 'cont' in " ".join(item.get('class')):
-                    conttags.append(item.a.string)
-                if 'tech' in " ".join(item.get('class')):
-                    techtags.append(item.a.string)
-                if 'ero' in " ".join(item.get('class')):
-                    erotags.append(item.a.string)
+            if test:
+                for item in list(test.children):
+                    if isinstance(item, NavigableString):
+                        continue
+                    if 'class' not in item.attrs:
+                        continue
+                    if 'cont' in " ".join(item.get('class')):
+                        conttags.append(item.a.string)
+                    if 'tech' in " ".join(item.get('class')):
+                        techtags.append(item.a.string)
+                    if 'ero' in " ".join(item.get('class')):
+                        erotags.append(item.a.string)
             data['tags']['content'] = conttags if len(conttags) else None
             data['tags']['technology'] = techtags if len(techtags) else None
             data['tags']['erotic'] = erotags if len(erotags) else None
