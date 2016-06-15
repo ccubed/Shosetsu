@@ -56,7 +56,10 @@ class Shosetsu:
             if 'No Results' in text:
                 raise VNDBNoResults(term)
             soup = BeautifulSoup(text, 'lxml')
-            return await self.parse_search(stype, soup)
+            resp = await self.parse_search(stype, soup)
+            if resp = []:
+                raise VNDBNoResults(term)
+            return resp
 
     async def get_novel(self, term):
         """
@@ -100,7 +103,7 @@ class Shosetsu:
                 raise aiohttp.HttpBadRequest("VNDB reported that there is no data for ID {}".format(vnid))
             text = await response.text()
             soup = BeautifulSoup(text, 'lxml')
-            data = {'titles': {}, 'img': None, 'length': None, 'developers': [], 'publishers': [], 'tags': {}, 'releases': {}}
+            data = {'titles': {}, 'img': None, 'length': None, 'developers': [], 'publishers': [], 'tags': {}, 'releases': {}, 'id': vnid}
             data['titles']['english'] = soup.find_all('div', class_='mainbox')[0].h1.string
             data['titles']['alt'] = soup.find_all('h2', class_='alttitle')[0].string
             data['img'] = 'https:' + soup.find_all('div', class_='vnimg')[0].img.get('src')
