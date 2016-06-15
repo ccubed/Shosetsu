@@ -61,7 +61,7 @@ class Shosetsu:
                 raise VNDBNoResults(term)
             return resp
 
-    async def get_novel(self, term):
+    async def get_novel(self, term, **kwargs):
         """
         If term is an ID will return that specific ID. If it's a string, it will return the details of the first search result for that term.
         Returned Dictionary Has the following structure:
@@ -72,7 +72,7 @@ class Shosetsu:
             'English' - English title of the novel
             'Alt' - Alternative title (Usually the Japanese one, but other languages exist)
             'Aliases' - A list of str that define the aliases as given in VNDB.
-        'Img' - Link to the Image shown on VNDB for that Visual Novel (May be NSFW, I don't filter those)
+        'Img' - Link to the Image shown on VNDB for that Visual Novel
         'Length' - Length given by VNDB
         'Developers' - A list containing the Developers of the VN.
         'Publishers' - A list containing the Publishers of the VN.
@@ -86,11 +86,14 @@ class Shosetsu:
             'Platform' - Release Platform
             'Name' - The name for this particular Release
             'ID' - The id for this release, also doubles as the link if you append https://vndb.org/ to it
-        'Desription' - Contains novel description text if there is any.
+        'Description' - Contains novel description text if there is any.
+        'ID' - The id for this novel, also doubles as the link if you append https://vndb.org/ to it
 
         :param term: id or name to get details of.
+        :param hide_nsfw: bool if 'Img' should filter links flagged as NSFW or not.
         :return dict: Dictionary with the parsed results of a novel
         """
+        hide_nsfw = kwargs.get('hide_nsfw')
         if not term.isdigit() and not term.startswith('v'):
             vnid = await self.search_vndb('v', term)
             vnid = vnid[0]['id']
@@ -103,10 +106,18 @@ class Shosetsu:
                 raise aiohttp.HttpBadRequest("VNDB reported that there is no data for ID {}".format(vnid))
             text = await response.text()
             soup = BeautifulSoup(text, 'lxml')
-            data = {'titles': {}, 'img': None, 'length': None, 'developers': [], 'publishers': [], 'tags': {}, 'releases': {}, 'id': vnid}
+            data = {'titles': {'english': [], 'alt': [], 'aliases': []}, 'img': None, 'length': None, 'developers': [], 'publishers': [], 'tags': {}, 'releases': {}, 'id': vnid}
             data['titles']['english'] = soup.find_all('div', class_='mainbox')[0].h1.string
-            data['titles']['alt'] = soup.find_all('h2', class_='alttitle')[0].string
-            data['img'] = 'https:' + soup.find_all('div', class_='vnimg')[0].img.get('src')
+            try:
+                data['titles']['alt'] = soup.find_all('h2', class_='alttitle')[0].string
+            except IndexError:
+                data['titles']['alt'] = None
+            try:
+                imgdiv = soup.find_all('div', class_='vnimg')[0]
+                if not (hide_nsfw and 'class' in imgdiv.p.attrs):
+                    data['img'] = 'https:' + imgdiv.img.get('src')
+            except AttributeError:
+                pass
             for item in soup.find_all('tr'):
                 if 'class' in item.attrs or len(list(item.children)) == 1:
                     continue
@@ -188,6 +199,8 @@ class Shosetsu:
                 if not isinstance(item, NavigableString):
                     continue
                 if item.startswith('['):
+                    continue
+                if item.startswith(']'):
                     continue
                 desc += item.string + "\n"
             data['description'] = desc
