@@ -1,4 +1,6 @@
 # Shosetsu
+[![Build Status](https://travis-ci.org/ccubed/Shosetsu.svg?branch=master)](https://travis-ci.org/ccubed/Shosetsu)
+[![codecov](https://codecov.io/gh/ccubed/Shosetsu/branch/master/graph/badge.svg)](https://codecov.io/gh/ccubed/Shosetsu)
 Python VNDB API Bindings for Python 3.5+ using asyncio. 
 (really I just scrape the website, because the tcp api doesn't even follow its own rules)
 

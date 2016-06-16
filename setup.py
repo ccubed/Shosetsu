@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='Shosetsu',
-    version='1.1.4',
+    version='1.2.0',
     packages=['Shosetsu'],
     url='https://github.com/ccubed/Shosetsu',
     license='MIT',
