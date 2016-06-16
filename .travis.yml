@@ -1,0 +1,14 @@
+language: python
+python:
+    - "3.5.1"
+    - "3.5"
+before_install:
+    - pip install codecov
+install:
+    - pip install lxml
+    - pip install bs4
+    - pip install aiohttp
+notifications:
+after_success:
+    - codecov
+script: coverage run -m unittest -v unitTests.ShosetsuTests

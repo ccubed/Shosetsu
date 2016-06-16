@@ -61,7 +61,7 @@ class Shosetsu:
                 raise VNDBNoResults(term)
             return resp
 
-    async def get_novel(self, term, **kwargs):
+    async def get_novel(self, term, hide_nsfw=False):
         """
         If term is an ID will return that specific ID. If it's a string, it will return the details of the first search result for that term.
         Returned Dictionary Has the following structure:
@@ -90,13 +90,15 @@ class Shosetsu:
         'ID' - The id for this novel, also doubles as the link if you append https://vndb.org/ to it
 
         :param term: id or name to get details of.
-        :param hide_nsfw: bool if 'Img' should filter links flagged as NSFW or not.
+        :param hide_nsfw: bool if 'Img' should filter links flagged as NSFW or not. (no reason to be kwargs...yet)
         :return dict: Dictionary with the parsed results of a novel
         """
-        hide_nsfw = kwargs.get('hide_nsfw')
         if not term.isdigit() and not term.startswith('v'):
-            vnid = await self.search_vndb('v', term)
-            vnid = vnid[0]['id']
+            try:
+                vnid = await self.search_vndb('v', term)
+                vnid = vnid[0]['id']
+            except VNDBOneResult as e:
+                vnid = e.vnid
         else:
             vnid = str(term)
             if not vnid.startswith('v'):
