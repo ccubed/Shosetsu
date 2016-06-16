@@ -42,7 +42,7 @@ class VNDBBadStype(Error):
     Attributes:
             expression - The input name that returned only one result
     """
-    def __init__(self, expression, vnid):
+    def __init__(self, expression):
         self.expression = expression
 
     def __str__(self):

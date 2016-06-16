@@ -202,7 +202,7 @@ class Shosetsu:
                     continue
                 if item.startswith('['):
                     continue
-                if item.startswith(']'):
+                if item.endswith(']'):
                     continue
                 desc += item.string + "\n"
             data['description'] = desc
