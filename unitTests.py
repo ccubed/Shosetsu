@@ -85,20 +85,23 @@ class ShosetsuTests(unittest.TestCase):
     def test_invoke_VNDBBadStype(self):
         with self.assertRaises(errors.VNDBBadStype) as e:
             self.loop.run_until_complete(self.setsu.search_vndb('x', 'haruka'))
-            self.assertEqual(e.expression, 'x')
-            self.assertEqual(str(e), "x is not a valid search type.")
+        texception = e.exception
+        self.assertEqual(texception.expression, 'x')
+        self.assertEqual(str(texception), "x is not a valid search type.")
 
     def test_invoke_VNDBOneResult(self):
         with self.assertRaises(errors.VNDBOneResult) as e:
             self.loop.run_until_complete(self.setsu.search_vndb('v', 'go go nippon my first trip to japan'))
-            self.assertEqual(e.vnid, 'v7316')
-            self.assertEqual(str(e), "Search go go nippon my first trip to japan only had one result at ID v7316.")
+        texception = e.exception
+        self.assertEqual(texception.vnid, 'v7316')
+        self.assertEqual(str(texception), "Search go go nippon my first trip to japan only had one result at ID v7316.")
 
     def test_invoke_VNDBNoResults(self):
         with self.assertRaises(errors.VNDBNoResults) as e:
             self.loop.run_until_complete(self.setsu.search_vndb('g', 'haruka'))
-            self.assertEqual(e.expression, 'haruka')
-            self.assertEqual(str(e), "Search haruka has no results.")
+        texception = e.exception
+        self.assertEqual(texception.expression, 'haruka')
+        self.assertEqual(str(texception), "Search haruka has no results.")
 
     #  Test Get Novel
     def test_get_novel_sfw(self):
