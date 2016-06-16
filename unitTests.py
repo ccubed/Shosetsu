@@ -32,7 +32,7 @@ class ShosetsuTests(unittest.TestCase):
         data = self.loop.run_until_complete(self.setsu.search_vndb('r', 'haruka'))
         self.assertEqual(len(data), 50)
         self.assertEqual(data[0]['platform'], 'Windows')
-        self.assertIsInstance(random.choice(data)['ages'], str)
+        self.assertIsInstance(random.choice(data)['name'], str)
         self.assertIsInstance(random.choice(data), dict)
         self.assertIsInstance(data, list)
         del data
