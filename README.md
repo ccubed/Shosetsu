@@ -4,6 +4,8 @@
 Python VNDB API Bindings for Python 3.5+ using asyncio. 
 (really I just scrape the website, because the tcp api doesn't even follow its own rules)
 
+The build present on Github is a stable build only. For development builds please see https://git.vertinext.com/ccubed/Shosetsu
+
 # Current Endpoints
 ## Shosetsu.search_vndb(stype, term)
 ```
